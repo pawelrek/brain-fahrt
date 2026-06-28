@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">#F23B2F</color>
+    <!-- Keep-dark canvas — launch frame background (no white flash). -->
+    <color name="launch_background">#131314</color>
+</resources>

@@ -1,0 +1,65 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# On-device ML models — fetched to disk for dev, downloaded at runtime in prod
+# (see assets/models/_download.sh). Too large to commit (~2.3 GB).
+/assets/models/*
+!/assets/models/_download.sh
+
+# claudex run artifacts (prompts, codex reviews, diffs, jsonl)
+.claude/claudex/
+
+# vendored+patched fllama (proguard fix); re-vendor per machine
+/third_party/fllama/
+
+# bundled model assets for the all-in-one APK (large; re-copy from assets/models/)
+android/app/src/main/assets/models/
+# install-time Play asset pack model binaries (large; re-copy from assets/models/)
+android/model_pack/src/main/assets/models/
+# temporary spike holding for the de-bundled 1.7B model (dup of assets/models/)
+/_spike_models_holding/
+android/build/
+.claude/audit/
