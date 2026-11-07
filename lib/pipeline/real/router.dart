@@ -57,9 +57,7 @@ class ExplicitMatch {
   /// token(s).
   final int matchEndCharIndex;
 
-  /// True only when the match was against the bucket's NAME or id. A keyword
-  /// match still routes (detId) but must never strip the preamble — the words
-  /// around a keyword are content ("remind me to call mom").
+  /// True when the match was against the bucket's name or id.
   final bool matchedOnName;
 
   /// Lowercased tokens BEFORE the preposition; [stripRoutingPreamble] only
@@ -147,7 +145,7 @@ const Set<String> _kTypeFramingFiller = {
 
 /// Strip "add to `<bucket>` [list]: " style preambles. Strips ONLY when:
 ///  - the match was on the bucket's NAME/id ([ExplicitMatch.matchedOnName]) —
-///    a keyword match routes but never strips ("remind me to call mom" keeps
+///    a non-name match never strips ("remind me to call mom" keeps
 ///    its full content even though 'call' is a todos keyword);
 ///  - the preposition sits within the first few tokens; and
 ///  - every token before the preposition is routing filler.
@@ -982,7 +980,7 @@ class Router {
   /// Returns an [ExplicitMatch] when the note explicitly routes to a bucket via
   /// a preposition ("add it to NAME", "in NAME"). High precision: only a token
   /// (or the next two joined) right after to/in/into/onto/for/under that
-  /// fuzzily equals a bucket name/id/keyword. The match span lets
+  /// fuzzily equals a bucket name/id. The match span lets
   /// [stripRoutingPreamble] cut the preamble before the LLM sees it.
   /// Tokenized over the ORIGINAL text (offsets valid by construction); each
   /// token is lowercased for comparison — never toLowerCase() the whole string
@@ -997,17 +995,7 @@ class Router {
           ? cand1 + tokens[i + 2].group(0)!.toLowerCase()
           : null;
       for (final b in buckets) {
-        // Name/id matches may strip the preamble (matchedOnName: true);
-        // keyword matches still route but never strip.
-        final candidateSets = [
-          (raws: <String>[b.name, b.id], matchedOnName: true),
-          (
-            raws: b.keywords.split(RegExp(r'[,\n]')),
-            matchedOnName: false,
-          ),
-        ];
-        for (final set in candidateSets) {
-          for (final raw in set.raws) {
+        for (final raw in <String>[b.name, b.id]) {
             final c =
                 raw.trim().toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
             if (c.length < 3) continue;
@@ -1022,14 +1010,13 @@ class Router {
                 bucketId: b.id,
                 prepositionTokenIndex: i,
                 matchEndCharIndex: end,
-                matchedOnName: set.matchedOnName,
+                matchedOnName: true,
                 leadingTokens: [
                   for (var j = 0; j < i; j++)
                     tokens[j].group(0)!.toLowerCase(),
                 ],
               );
             }
-          }
         }
       }
     }

@@ -207,15 +207,21 @@ void main() {
           'we could add a dark mode toggle');
     });
 
-    test('keyword match routes but NEVER strips: "remind me to call mom"', () {
-      // 'call' is a todos KEYWORD — routing may use it, but stripping through
-      // it would destroy the leading content ("remind me to call" -> "mom").
-      const t = 'remind me to call mom tomorrow';
-      final m = Router.explicitTarget(t, kBuckets);
-      expect(m, isNotNull);
-      expect(m!.bucketId, 'todos');
-      expect(m.matchedOnName, isFalse);
-      expect(stripRoutingPreamble(t, m), t); // full transcript reaches the LLM
+    test('keywords do not become explicit targets', () {
+      for (final text in [
+        'idea: in other words we could sell stickers',
+        'ask Tom about ideas for food trucks',
+        'remember to give feedback on the app idea',
+        'remind me to call mom tomorrow',
+      ]) {
+        expect(Router.explicitTarget(text, kBuckets), isNull, reason: text);
+      }
+    });
+
+    test('an earlier keyword does not hide a later explicit bucket', () {
+      final match = Router.explicitTarget(
+          'remember to call mom and add this to webapp', kBuckets);
+      expect(match?.bucketId, 'webapp');
     });
 
     test('non-filler head blocks strip: "buy supplies for shopping trip"', () {
